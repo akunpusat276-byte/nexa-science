@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXA Science Index - Platform Indeks & Publikasi Ilmiah</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        nexa: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome & Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
+
+    <!-- NAVBAR -->
+    <header class="bg-slate-800/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo dengan Fitur Ketuk 5 Kali Rahasia untuk Admin di HP -->
+                <div class="flex items-center space-x-3 cursor-pointer select-none" onclick="handleLogoTap()">
+                    <div class="bg-indigo-600 text-white font-bold p-2 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <i class="fa-solid fa-n text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-lg font-black tracking-wider bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">NEXA</span>
+                        <span class="text-xs block text-slate-400 font-medium tracking-widest uppercase">Science Index</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                    <button onclick="switchTab('beranda')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium transition text-indigo-400 bg-indigo-500/10" data-target="beranda">Beranda</button>
+                    <button onclick="switchTab('peneliti')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-700/50" data-target="peneliti">Peneliti</button>
+                    <button onclick="switchTab('institusi')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-700/50" data-target="institusi">Institusi</button>
+                    <button onclick="switchTab('jurnal')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-700/50" data-target="jurnal">Jurnal</button>
+                    <button onclick="switchTab('publikasi')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-700/50 flex items-center gap-1.5" data-target="publikasi">
+                        <i class="fa-solid fa-paper-plane text-xs"></i> Publikasi Jurnal
+                    </button>
+                    <button onclick="switchTab('analitik')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-700/50" data-target="analitik">Analitik</button>
+                    <button id="adminNavBtn" onclick="switchTab('admin')" class="nav-btn hidden px-3 py-2 rounded-lg text-sm font-medium transition text-amber-400 hover:bg-amber-500/10 border border-amber-500/30" data-target="admin">
+                        <i class="fa-solid fa-shield-halved mr-1"></i> Admin Panel
+                    </button>
+                </nav>
+
+                <!-- Actions: Dark Mode & Logout Admin -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-slate-700/50 text-slate-300 hover:text-white transition">
+                        <i id="themeIcon" class="fa-solid fa-moon"></i>
+                    </button>
+                    <button id="logoutAdminBtn" onclick="logoutAdmin()" class="hidden bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition items-center gap-1.5">
+                        <i class="fa-solid fa-right-from-bracket"></i> Keluar Admin
+                    </button>
+                    <!-- Mobile Hamburger Button -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg bg-slate-700 text-slate-300 hover:text-white">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-800 border-b border-slate-700 px-4 pt-2 pb-4 space-y-1">
+            <button onclick="switchTab('beranda'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700">Beranda</button>
+            <button onclick="switchTab('peneliti'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700">Peneliti</button>
+            <button onclick="switchTab('institusi'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700">Institusi</button>
+            <button onclick="switchTab('jurnal'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700">Jurnal</button>
+            <button onclick="switchTab('publikasi'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700">Publikasi Jurnal</button>
+            <button onclick="switchTab('analitik'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700">Analitik</button>
+            <button id="mobileAdminNavBtn" onclick="switchTab('admin'); toggleMobileMenu();" class="hidden block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-amber-400 hover:bg-amber-500/10">Admin Panel</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB: BERANDA -->
+        <section id="tab-beranda" class="space-y-8 tab-content">
+            <div class="relative bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-800 rounded-3xl p-8 sm:p-12 border border-slate-700 shadow-2xl overflow-hidden">
+                <div class="absolute right-0 bottom-0 translate-x-10 translate-y-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl space-y-6">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                        <i class="fa-solid fa-award"></i> Akreditasi Jurnal Ilmiah Nasional (NEXA 1 - 6)
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                        Pusat Indeksasi & Referensi Riset Ilmiah Indonesia
+                    </h1>
+                    <p class="text-slate-300 text-base sm:text-lg">
+                        Eksplorasi direktori jurnal terakreditasi, profil peneliti kredibel, pemeringkatan institusi, dan publikasi riset komprehensif dalam satu platform terintegrasi.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                        <div class="relative flex-grow">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
+                            <input type="text" id="globalSearchInput" placeholder="Cari judul artikel, nama penulis, atau institusi..." class="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 shadow-inner">
+                        </div>
+                        <button onclick="handleGlobalSearch()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+                            <span>Cari Riset</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-slate-800/60 border border-slate-700/80 p-5 rounded-2xl">
+                    <div class="text-indigo-400 text-2xl font-black mb-1" id="statJournals">0</div>
+                    <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Total Jurnal</div>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/80 p-5 rounded-2xl">
+                    <div class="text-emerald-400 text-2xl font-black mb-1" id="statResearchers">0</div>
+                    <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Peneliti Terdaftar</div>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/80 p-5 rounded-2xl">
+                    <div class="text-cyan-400 text-2xl font-black mb-1" id="statInstitutions">0</div>
+                    <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Institusi/Kampus</div>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/80 p-5 rounded-2xl">
+                    <div class="text-amber-400 text-2xl font-black mb-1" id="statDocuments">0</div>
+                    <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Dokumen Terindeks</div>
+                </div>
+            </div>
+
+            <!-- Featured Journals -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-star text-amber-400"></i> Jurnal Unggulan Terkini
+                    </h2>
+                    <button onclick="switchTab('jurnal')" class="text-sm text-indigo-400 hover:text-indigo-300 font-semibold">Lihat Semua &rarr;</button>
+                </div>
+                <div id="homeFeaturedJournals" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            </div>
+        </section>
+
+        <!-- TAB: PENELITI -->
+        <section id="tab-peneliti" class="space-y-6 tab-content hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Direktori Peneliti & Dosen</h2>
+                    <p class="text-slate-400 text-sm">Temukan profil peneliti, sitasi, dan rekam jejak publikasi ilmiah.</p>
+                </div>
+                <div class="w-full sm:w-72">
+                    <input type="text" id="searchResearcher" oninput="renderResearchers()" placeholder="Cari nama atau afiliasi..." class="w-full px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            <div id="researchersContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- TAB: INSTITUSI -->
+        <section id="tab-institusi" class="space-y-6 tab-content hidden">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Pemeringkatan Institusi</h2>
+                <p class="text-slate-400 text-sm">Daftar universitas dan lembaga riset dengan publikasi terbanyak.</p>
+            </div>
+            <div class="bg-slate-800/80 border border-slate-700 rounded-2xl overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-800/90 border-b border-slate-700 text-slate-400 text-xs uppercase font-semibold">
+                                <th class="px-6 py-4">Peringkat</th>
+                                <th class="px-6 py-4">Nama Institusi</th>
+                                <th class="px-6 py-4">Afiliasi ID</th>
+                                <th class="px-6 py-4 text-center">Skor NEXA</th>
+                                <th class="px-6 py-4 text-center">Total Dokumen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="institutionsTableBody" class="divide-y divide-slate-700/50 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: JURNAL -->
+        <section id="tab-jurnal" class="space-y-6 tab-content hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Direktori Jurnal Ilmiah</h2>
+                    <p class="text-slate-400 text-sm">Daftar jurnal terakreditasi NEXA 1 hingga NEXA 6.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                    <select id="filterNexaLevel" onchange="renderJournals()" class="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
+                        <option value="">Semua Level NEXA</option>
+                        <option value="NEXA 1">NEXA 1</option>
+                        <option value="NEXA 2">NEXA 2</option>
+                        <option value="NEXA 3">NEXA 3</option>
+                        <option value="NEXA 4">NEXA 4</option>
+                        <option value="NEXA 5">NEXA 5</option>
+                        <option value="NEXA 6">NEXA 6</option>
+                    </select>
+                    <input type="text" id="searchJournal" oninput="renderJournals()" placeholder="Cari jurnal/issn..." class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            <div id="journalsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </section>
+
+        <!-- TAB: PUBLIKASI JURNAL -->
+        <section id="tab-publikasi" class="space-y-8 tab-content hidden max-w-4xl mx-auto">
+            <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-800 border border-slate-700 p-8 rounded-3xl shadow-xl space-y-6">
+                <div class="space-y-2">
+                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">Layanan Pengajuan Naskah</span>
+                    <h2 class="text-3xl font-extrabold text-white">Ingin Mempublikasikan Jurnal atau Artikel ke Website Ini?</h2>
+                    <p class="text-slate-300">
+                        Kami membuka kesempatan seluas-luasnya bagi para peneliti, dosen, dan mahasiswa untuk mendaftarkan jurnal ilmiah atau naskah riset agar terindeks di sistem NEXA Science Index. Pengunggahan dan verifikasi data artikel sepenuhnya dikelola secara eksklusif oleh Admin sistem. Silakan hubungi kontak resmi di bawah ini atau gunakan pembuat pesan instan untuk mengirimkan data naskah Anda.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div class="bg-slate-800/80 border border-slate-700 p-5 rounded-2xl flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400 font-medium">WhatsApp Resmi</div>
+                            <a href="https://wa.me/6285773842385" target="_blank" class="text-white font-bold hover:text-emerald-400 transition">+62 857-7384-2385</a>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700 p-5 rounded-2xl flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400 font-medium">Email Pengiriman Naskah</div>
+                            <a href="mailto:jokosaputro200513@gmail.com" class="text-white font-bold hover:text-indigo-400 transition text-sm break-all">jokosaputro200513@gmail.com</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 border border-slate-700 p-6 rounded-2xl space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-file-pen text-indigo-400"></i> Buat Format Pesan Pengajuan Naskah
+                    </h3>
+                    <p class="text-xs text-slate-400">Isi data di bawah ini untuk menghasilkan draf pesan otomatis yang bisa langsung Anda kirimkan via WhatsApp atau Email ke Admin.</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Judul Artikel / Jurnal</label>
+                            <input type="text" id="genTitle" placeholder="Contoh: Analisis Machine Learning..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Penulis & Afiliasi</label>
+                            <input type="text" id="genAuthor" placeholder="Contoh: Joko Saputro (Universitas...)" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Pilihan Akreditasi Tujuan</label>
+                            <select id="genNexa" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                                <option value="NEXA 1">NEXA 1</option>
+                                <option value="NEXA 2">NEXA 2</option>
+                                <option value="NEXA 3">NEXA 3</option>
+                                <option value="NEXA 4">NEXA 4</option>
+                                <option value="NEXA 5">NEXA 5</option>
+                                <option value="NEXA 6">NEXA 6</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Tautan File Dokumen / Google Drive</label>
+                            <input type="text" id="genLink" placeholder="https://drive.google.com/..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="sendViaWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                            <i class="fa-brands fa-whatsapp text-base"><span>Kirim Draf ke WhatsApp</span></i>
+                        </button>
+                        <button onclick="sendViaEmail()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+                            <i class="fa-solid fa-envelope text-base"><span>Kirim Draf ke Email</span></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: ANALITIK -->
+        <section id="tab-analitik" class="space-y-6 tab-content hidden">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Analitik & Statistik Publikasi</h2>
+                <p class="text-slate-400 text-sm">Visualisasi data perkembangan riset dan distribusi level akreditasi NEXA.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-xl">
+                    <h3 class="text-sm font-bold text-slate-300 mb-4">Distribusi Level Akreditasi NEXA</h3>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="nexaChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-xl">
+                    <h3 class="text-sm font-bold text-slate-300 mb-4">Pertumbuhan Publikasi Riset per Tahun</h3>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: ADMIN PANEL -->
+        <section id="tab-admin" class="space-y-8 tab-content hidden">
+            <div class="bg-amber-500/10 border border-amber-500/30 p-6 rounded-2xl flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-slate-900 font-bold flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-amber-400 font-bold">Panel Kontrol Administrator Eksklusif</h3>
+                        <p class="text-slate-300 text-xs">Anda masuk sebagai Administrator utama sistem NEXA Science Index.</p>
+                    </div>
+                </div>
+                <button onclick="logoutAdmin()" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition">Keluar Admin</button>
+            </div>
+
+            <!-- Manajer: Jurnal & Artikel -->
+            <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark text-indigo-400"></i> Kelola Jurnal & Unggah Dokumen Artikel
+                </h3>
+                <form id="journalForm" onsubmit="saveJournal(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input type="hidden" id="journalEditId">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Judul Jurnal / Artikel</label>
+                        <input type="text" id="jTitle" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Penerbit / Institusi</label>
+                        <input type="text" id="jPublisher" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Level Akreditasi</label>
+                        <select id="jLevel" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                            <option value="NEXA 1">NEXA 1</option>
+                            <option value="NEXA 2">NEXA 2</option>
+                            <option value="NEXA 3">NEXA 3</option>
+                            <option value="NEXA 4">NEXA 4</option>
+                            <option value="NEXA 5">NEXA 5</option>
+                            <option value="NEXA 6">NEXA 6</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">ISSN</label>
+                        <input type="text" id="jIssn" placeholder="2xxx-xxxx" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Unggah Dokumen Berkas (.pdf, .docx)</label>
+                        <input type="file" id="jFile" accept=".pdf,.doc,.docx" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
+                    </div>
+                    <div class="sm:col-span-2 flex gap-2">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2 rounded-xl text-sm transition">Simpan Jurnal</button>
+                        <button type="button" onclick="resetJournalForm()" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">Batal</button>
+                    </div>
+                </form>
+
+                <div class="pt-4 border-t border-slate-700">
+                    <h4 class="text-sm font-semibold text-slate-300 mb-3">Daftar Artikel Jurnal Terdaftar</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-400 border-b border-slate-700">
+                                    <th class="p-3">Judul</th>
+                                    <th class="p-3">Penerbit</th>
+                                    <th class="p-3">Level</th>
+                                    <th class="p-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminJournalsTable" class="divide-y divide-slate-700/50"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manajer: Peneliti -->
+            <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-users text-emerald-400"></i> Kelola Profil Peneliti
+                </h3>
+                <form id="researcherForm" onsubmit="saveResearcher(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input type="hidden" id="resEditId">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap & Gelar</label>
+                        <input type="text" id="rName" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Afiliasi / Universitas</label>
+                        <input type="text" id="rAffiliation" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Jumlah Sitasi</label>
+                        <input type="number" id="rCitations" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">H-Index</label>
+                        <input type="number" id="rHIndex" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div class="sm:col-span-2 flex gap-2">
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-5 py-2 rounded-xl text-sm transition">Simpan Peneliti</button>
+                        <button type="button" onclick="resetResearcherForm()" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">Batal</button>
+                    </div>
+                </form>
+
+                <div class="pt-4 border-t border-slate-700">
+                    <h4 class="text-sm font-semibold text-slate-300 mb-3">Daftar Peneliti Terdaftar</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-400 border-b border-slate-700">
+                                    <th class="p-3">Nama</th>
+                                    <th class="p-3">Afiliasi</th>
+                                    <th class="p-3">Sitasi</th>
+                                    <th class="p-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminResearchersTable" class="divide-y divide-slate-700/50"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manajer: Institusi -->
+            <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-building-columns text-cyan-400"></i> Kelola Pemeringkatan Institusi
+                </h3>
+                <form id="institutionForm" onsubmit="saveInstitution(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input type="hidden" id="instEditId">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lembaga / Universitas</label>
+                        <input type="text" id="iName" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Afiliasi ID</label>
+                        <input type="text" id="iAffId" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Skor NEXA</label>
+                        <input type="number" step="0.01" id="iScore" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Total Dokumen</label>
+                        <input type="number" id="iDocs" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div class="sm:col-span-2 flex gap-2">
+                        <button type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-5 py-2 rounded-xl text-sm transition">Simpan Institusi</button>
+                        <button type="button" onclick="resetInstitutionForm()" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">Batal</button>
+                    </div>
+                </form>
+
+                <div class="pt-4 border-t border-slate-700">
+                    <h4 class="text-sm font-semibold text-slate-300 mb-3">Daftar Institusi Pemeringkatan</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-400 border-b border-slate-700">
+                                    <th class="p-3">Institusi</th>
+                                    <th class="p-3">Afiliasi ID</th>
+                                    <th class="p-3">Skor</th>
+                                    <th class="p-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminInstitutionsTable" class="divide-y divide-slate-700/50"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-800 border-t border-slate-700 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-3">
+            <div class="flex items-center justify-center space-x-2">
+                <div class="bg-indigo-600 text-white font-bold p-1.5 rounded-lg text-xs">
+                    <i class="fa-solid fa-n"></i>
+                </div>
+                <span class="font-bold text-white tracking-wider">NEXA SCIENCE INDEX</span>
+            </div>
+            <p class="text-slate-400 text-xs">Platform Indeksasi & Pemeringkatan Riset Ilmiah Indonesia &bull; Hak Cipta Dilindungi</p>
+        </div>
+    </footer>
+
+    <!-- MODAL LOGIN ADMIN RAHASIA -->
+    <div id="adminLoginModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-6 shadow-2xl">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Otorisasi Administrator</h3>
+                <p class="text-xs text-slate-400">Masukkan sandi khusus untuk mengakses panel kontrol.</p>
+            </div>
+            <div class="space-y-4">
+                <input type="password" id="adminPasswordInput" placeholder="Sandi Admin..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-amber-500 text-center tracking-widest">
+                <div class="flex gap-2">
+                    <button onclick="verifyAdminLogin()" class="flex-grow bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-3 rounded-xl text-sm transition">Masuk</button>
+                    <button onclick="closeAdminModal()" class="px-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 rounded-xl text-sm transition">Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APLIKASI -->
+    <script>
+        const defaultJournals = [
+            { id: 1, title: "Jurnal Teknologi Informasi dan Ilmu Komputer (JTIIK)", publisher: "Universitas Brawijaya", level: "NEXA 1", issn: "2528-6579", file: "#" },
+            { id: 2, title: "Indonesian Journal of Electrical Engineering and Computer Science", publisher: "Universitas Ahmad Dahlan", level: "NEXA 1", issn: "2502-4752", file: "#" },
+            { id: 3, title: "Jurnal Ilmu Komputer dan Informasi", publisher: "Universitas Indonesia", level: "NEXA 2", issn: "2085-871X", file: "#" },
+            { id: 4, title: "Media Informatika Budidarma", publisher: "STMIK Budidarma", level: "NEXA 3", issn: "2614-5278", file: "#" },
+            { id: 5, title: "Jurnal Sistem Komputer dan Rekayasa", publisher: "Universitas Telkom", level: "NEXA 4", issn: "2598-6333", file: "#" },
+            { id: 6, title: "Jurnal Inovasi Riset Global", publisher: "NEXA Press", level: "NEXA 5", issn: "2715-9988", file: "#" }
+        ];
+
+        const defaultResearchers = [
+            { id: 1, name: "Prof. Dr. Joko Saputro, M.Kom.", affiliation: "Universitas Indonesia", citations: 1450, hIndex: 22 },
+            { id: 2, name: "Dr. Siti Aminah, Ph.D.", affiliation: "Universitas Gadjah Mada", citations: 980, hIndex: 18 },
+            { id: 3, name: "Dr. Budi Santoso, M.T.", affiliation: "Institut Teknologi Bandung", citations: 1200, hIndex: 20 },
+            { id: 4, name: "Ahmad Fauzi, M.Cs.", affiliation: "Universitas Diponegoro", citations: 450, hIndex: 11 }
+        ];
+
+        const defaultInstitutions = [
+            { id: 1, name: "Universitas Indonesia", affId: "ID-001", score: 9845.5, docs: 15420 },
+            { id: 2, name: "Institut Teknologi Bandung", affId: "ID-002", score: 9620.0, docs: 14890 },
+            { id: 3, name: "Universitas Gadjah Mada", affId: "ID-003", score: 9450.2, docs: 14100 },
+            { id: 4, name: "Universitas Brawijaya", affId: "ID-004", score: 8900.4, docs: 11250 }
+        ];
+
+        let journals = JSON.parse(localStorage.getItem('nexa_journals')) || defaultJournals;
+        let researchers = JSON.parse(localStorage.getItem('nexa_researchers')) || defaultResearchers;
+        let institutions = JSON.parse(localStorage.getItem('nexa_institutions')) || defaultInstitutions;
+        let isAdmin = localStorage.getItem('nexa_is_admin') === 'true';
+
+        // Variabel untuk counter ketuk logo di HP
+        let logoTapCount = 0;
+        let logoTapTimer = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAuthUI();
+            renderAll();
+            initCharts();
+
+            // Shortcut Keyboard Rahasia Ctrl + Shift + A di Desktop
+            window.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.shiftKey && e.code === 'KeyA') {
+                    e.preventDefault();
+                    openAdminModal();
+                }
+            });
+        });
+
+        // Fitur Ketuk Logo 5 Kali untuk Membuka Login Admin di HP
+        function handleLogoTap() {
+            logoTapCount++;
+            clearTimeout(logoTapTimer);
+            
+            if (logoTapCount >= 5) {
+                logoTapCount = 0;
+                openAdminModal();
+            } else {
+                logoTapTimer = setTimeout(() => {
+                    logoTapCount = 0;
+                }, 1000); // Reset hitungan jika jeda lebih dari 1 detik
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('nexa_journals', JSON.stringify(journals));
+            localStorage.setItem('nexa_researchers', JSON.stringify(researchers));
+            localStorage.setItem('nexa_institutions', JSON.stringify(institutions));
+            localStorage.setItem('nexa_is_admin', isAdmin);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-indigo-400', 'bg-indigo-500/10');
+                btn.classList.add('text-slate-300');
+                if (btn.getAttribute('data-target') === tabId) {
+                    btn.classList.add('text-indigo-400', 'bg-indigo-500/10');
+                    btn.classList.remove('text-slate-300');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const icon = document.getElementById('themeIcon');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        }
+
+        function openAdminModal() {
+            document.getElementById('adminLoginModal').classList.remove('hidden');
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminPasswordInput').focus();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminLoginModal').classList.add('hidden');
+        }
+
+        function verifyAdminLogin() {
+            const pass = document.getElementById('adminPasswordInput').value;
+            if (pass === 'admin123') {
+                isAdmin = true;
+                saveData();
+                updateAuthUI();
+                closeAdminModal();
+                switchTab('admin');
+            } else {
+                alert('Sandi admin salah!');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdmin = false;
+            saveData();
+            updateAuthUI();
+            switchTab('beranda');
+        }
+
+        function updateAuthUI() {
+            const adminNavBtn = document.getElementById('adminNavBtn');
+            const mobileAdminNavBtn = document.getElementById('mobileAdminNavBtn');
+            const logoutAdminBtn = document.getElementById('logoutAdminBtn');
+
+            if (isAdmin) {
+                adminNavBtn.classList.remove('hidden');
+                mobileAdminNavBtn.classList.remove('hidden');
+                logoutAdminBtn.classList.remove('hidden');
+                logoutAdminBtn.classList.add('flex');
+            } else {
+                adminNavBtn.classList.add('hidden');
+                mobileAdminNavBtn.classList.add('hidden');
+                logoutAdminBtn.classList.add('hidden');
+                logoutAdminBtn.classList.remove('flex');
+            }
+        }
+
+        function renderAll() {
+            renderStats();
+            renderHomeFeatured();
+            renderJournals();
+            renderResearchers();
+            renderInstitutions();
+            if (isAdmin) {
+                renderAdminTables();
+            }
+        }
+
+        function renderStats() {
+            document.getElementById('statJournals').innerText = journals.length;
+            document.getElementById('statResearchers').innerText = researchers.length;
+            document.getElementById('statInstitutions').innerText = institutions.length;
+            const totalDocs = institutions.reduce((acc, curr) => acc + curr.docs, 0);
+            document.getElementById('statDocuments').innerText = totalDocs.toLocaleString();
+        }
+
+        function renderHomeFeatured() {
+            const container = document.getElementById('homeFeaturedJournals');
+            container.innerHTML = journals.slice(0, 3).map(j => `
+                <div class="bg-slate-800/80 border border-slate-700 p-6 rounded-2xl flex flex-col justify-between space-y-4 shadow-xl">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">${j.level}</span>
+                            <span class="text-xs text-slate-400">ISSN: ${j.issn}</span>
+                        </div>
+                        <h3 class="text-white font-bold text-base line-clamp-2">${j.title}</h3>
+                        <p class="text-xs text-slate-400"><i class="fa-solid fa-building-columns mr-1"></i> ${j.publisher}</p>
+                    </div>
+                    <a href="${j.file}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300">
+                        <i class="fa-solid fa-file-pdf"></i> Unduh Dokumen Jurnal &rarr;
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        function renderJournals() {
+            const search = document.getElementById('searchJournal').value.toLowerCase();
+            const level = document.getElementById('filterNexaLevel').value;
+            const container = document.getElementById('journalsContainer');
+
+            const filtered = journals.filter(j => {
+                const matchSearch = j.title.toLowerCase().includes(search) || j.issn.toLowerCase().includes(search) || j.publisher.toLowerCase().includes(search);
+                const matchLevel = level === "" || j.level === level;
+                return matchSearch && matchLevel;
+            });
+
+            container.innerHTML = filtered.length ? filtered.map(j => `
+                <div class="bg-slate-800/80 border border-slate-700 p-6 rounded-2xl flex flex-col justify-between space-y-4 shadow-xl">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">${j.level}</span>
+                            <span class="text-xs text-slate-400">ISSN: ${j.issn}</span>
+                        </div>
+                        <h3 class="text-white font-bold text-base">${j.title}</h3>
+                        <p class="text-xs text-slate-400"><i class="fa-solid fa-building-columns mr-1"></i> ${j.publisher}</p>
+                    </div>
+                    <div class="pt-2 border-t border-slate-700/60 flex items-center justify-between">
+                        <a href="${j.file}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300">
+                            <i class="fa-solid fa-file-pdf"></i> Dokumen Lengkap
+                        </a>
+                        <span class="text-xs text-emerald-400 font-medium"><i class="fa-solid fa-circle-check"></i> Terindeks Aktif</span>
+                    </div>
+                </div>
+            `).join('') : `<div class="col-span-2 text-center py-8 text-slate-400 text-sm">Tidak ada jurnal yang ditemukan.</div>`;
+        }
+
+        function renderResearchers() {
+            const search = document.getElementById('searchResearcher').value.toLowerCase();
+            const container = document.getElementById('researchersContainer');
+
+            const filtered = researchers.filter(r => r.name.toLowerCase().includes(search) || r.affiliation.toLowerCase().includes(search));
+
+            container.innerHTML = filtered.length ? filtered.map(r => `
+                <div class="bg-slate-800/80 border border-slate-700 p-6 rounded-2xl space-y-4 shadow-xl flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-500/20">
+                            ${r.name.charAt(0)}
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold text-base">${r.name}</h3>
+                            <p class="text-xs text-slate-400"><i class="fa-solid fa-graduation-cap mr-1"></i> ${r.affiliation}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-700/60 text-center">
+                        <div class="bg-slate-900/60 p-2.5 rounded-xl">
+                            <div class="text-indigo-400 font-bold text-sm">${r.citations.toLocaleString()}</div>
+                            <div class="text-[10px] text-slate-400 uppercase tracking-wider">Sitasi</div>
+                        </div>
+                        <div class="bg-slate-900/60 p-2.5 rounded-xl">
+                            <div class="text-emerald-400 font-bold text-sm">${r.hIndex}</div>
+                            <div class="text-[10px] text-slate-400 uppercase tracking-wider">H-Index</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('') : `<div class="col-span-3 text-center py-8 text-slate-400 text-sm">Peneliti tidak ditemukan.</div>`;
+        }
+
+        function renderInstitutions() {
+            const sorted = [...institutions].sort((a, b) => b.score - a.score);
+            const tbody = document.getElementById('institutionsTableBody');
+            tbody.innerHTML = sorted.map((inst, idx) => `
+                <tr class="hover:bg-slate-700/30 transition border-b border-slate-700/40">
+                    <td class="px-6 py-4 font-bold text-indigo-400">#${idx + 1}</td>
+                    <td class="px-6 py-4 font-semibold text-white">${inst.name}</td>
+                    <td class="px-6 py-4 text-slate-400">${inst.affId}</td>
+                    <td class="px-6 py-4 text-center font-bold text-amber-400">${inst.score.toLocaleString()}</td>
+                    <td class="px-6 py-4 text-center text-slate-300">${inst.docs.toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function handleGlobalSearch() {
+            const query = document.getElementById('globalSearchInput').value;
+            if(!query) return;
+            switchTab('jurnal');
+            document.getElementById('searchJournal').value = query;
+            renderJournals();
+        }
+
+        function sendViaWhatsApp() {
+            const title = document.getElementById('genTitle').value;
+            const author = document.getElementById('genAuthor').value;
+            const nexa = document.getElementById('genNexa').value;
+            const link = document.getElementById('genLink').value;
+
+            const text = `Halo Admin NEXA Science Index,\n\nSaya ingin mengajukan publikasi naskah dengan detail berikut:\n- Judul: ${title}\n- Penulis: ${author}\n- Target Level: ${nexa}\n- Tautan File: ${link}\n\nMohon bantuannya untuk diverifikasi. Terima kasih.`;
+            const url = `https://wa.me/6285773842385?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function sendViaEmail() {
+            const title = document.getElementById('genTitle').value;
+            const author = document.getElementById('genAuthor').value;
+            const nexa = document.getElementById('genNexa').value;
+            const link = document.getElementById('genLink').value;
+
+            const subject = `Pengajuan Publikasi Naskah - ${title}`;
+            const body = `Halo Admin NEXA Science Index,\n\nSaya ingin mengajukan publikasi naskah dengan detail berikut:\n- Judul: ${title}\n- Penulis: ${author}\n- Target Level: ${nexa}\n- Tautan File: ${link}\n\nMohon verifikasinya. Terima kasih.`;
+            window.location.href = `mailto:jokosaputro200513@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+
+        function renderAdminTables() {
+            document.getElementById('adminJournalsTable').innerHTML = journals.map(j => `
+                <tr class="border-b border-slate-700/50">
+                    <td class="p-3 font-semibold text-white">${j.title}</td>
+                    <td class="p-3 text-slate-400">${j.publisher}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-bold">${j.level}</span></td>
+                    <td class="p-3 text-right space-x-2">
+                        <button onclick="editJournal(${j.id})" class="text-amber-400 hover:text-amber-300 font-medium">Edit</button>
+                        <button onclick="deleteJournal(${j.id})" class="text-rose-400 hover:text-rose-300 font-medium">Hapus</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('adminResearchersTable').innerHTML = researchers.map(r => `
+                <tr class="border-b border-slate-700/50">
+                    <td class="p-3 font-semibold text-white">${r.name}</td>
+                    <td class="p-3 text-slate-400">${r.affiliation}</td>
+                    <td class="p-3 text-indigo-400">${r.citations}</td>
+                    <td class="p-3 text-right space-x-2">
+                        <button onclick="editResearcher(${r.id})" class="text-amber-400 hover:text-amber-300 font-medium">Edit</button>
+                        <button onclick="deleteResearcher(${r.id})" class="text-rose-400 hover:text-rose-300 font-medium">Hapus</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('adminInstitutionsTable').innerHTML = institutions.map(i => `
+                <tr class="border-b border-slate-700/50">
+                    <td class="p-3 font-semibold text-white">${i.name}</td>
+                    <td class="p-3 text-slate-400">${i.affId}</td>
+                    <td class="p-3 text-amber-400 font-bold">${i.score}</td>
+                    <td class="p-3 text-right space-x-2">
+                        <button onclick="editInstitution(${i.id})" class="text-amber-400 hover:text-amber-300 font-medium">Edit</button>
+                        <button onclick="deleteInstitution(${i.id})" class="text-rose-400 hover:text-rose-300 font-medium">Hapus</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function saveJournal(e) {
+            e.preventDefault();
+            const id = document.getElementById('journalEditId').value;
+            const title = document.getElementById('jTitle').value;
+            const publisher = document.getElementById('jPublisher').value;
+            const level = document.getElementById('jLevel').value;
+            const issn = document.getElementById('jIssn').value;
+            const fileInput = document.getElementById('jFile');
+            let filePath = "#";
+            if (fileInput.files.length > 0) {
+                filePath = URL.createObjectURL(fileInput.files[0]);
+            }
+
+            if (id) {
+                journals = journals.map(j => j.id == id ? { ...j, title, publisher, level, issn, file: fileInput.files.length > 0 ? filePath : j.file } : j);
+            } else {
+                const newJ = { id: Date.now(), title, publisher, level, issn, file: filePath };
+                journals.push(newJ);
+            }
+            saveData();
+            renderAll();
+            resetJournalForm();
+        }
+
+        function editJournal(id) {
+            const j = journals.find(item => item.id == id);
+            if(j) {
+                document.getElementById('journalEditId').value = j.id;
+                document.getElementById('jTitle').value = j.title;
+                document.getElementById('jPublisher').value = j.publisher;
+                document.getElementById('jLevel').value = j.level;
+                document.getElementById('jIssn').value = j.issn;
+                window.scrollTo({ top: 500, behavior: 'smooth' });
+            }
+        }
+
+        function deleteJournal(id) {
+            if(confirm('Yakin ingin menghapus jurnal ini?')) {
+                journals = journals.filter(j => j.id != id);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function resetJournalForm() {
+            document.getElementById('journalForm').reset();
+            document.getElementById('journalEditId').value = '';
+        }
+
+        function saveResearcher(e) {
+            e.preventDefault();
+            const id = document.getElementById('resEditId').value;
+            const name = document.getElementById('rName').value;
+            const affiliation = document.getElementById('rAffiliation').value;
+            const citations = parseInt(document.getElementById('rCitations').value);
+            const hIndex = parseInt(document.getElementById('rHIndex').value);
+
+            if (id) {
+                researchers = researchers.map(r => r.id == id ? { ...r, name, affiliation, citations, hIndex } : r);
+            } else {
+                const newR = { id: Date.now(), name, affiliation, citations, hIndex };
+                researchers.push(newR);
+            }
+            saveData();
+            renderAll();
+            resetResearcherForm();
+        }
+
+        function editResearcher(id) {
+            const r = researchers.find(item => item.id == id);
+            if(r) {
+                document.getElementById('resEditId').value = r.id;
+                document.getElementById('rName').value = r.name;
+                document.getElementById('rAffiliation').value = r.affiliation;
+                document.getElementById('rCitations').value = r.citations;
+                document.getElementById('rHIndex').value = r.hIndex;
+            }
+        }
+
+        function deleteResearcher(id) {
+            if(confirm('Yakin ingin menghapus profil peneliti ini?')) {
+                researchers = researchers.filter(r => r.id != id);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function resetResearcherForm() {
+            document.getElementById('researcherForm').reset();
+            document.getElementById('resEditId').value = '';
+        }
+
+        function saveInstitution(e) {
+            e.preventDefault();
+            const id = document.getElementById('instEditId').value;
+            const name = document.getElementById('iName').value;
+            const affId = document.getElementById('iAffId').value;
+            const score = parseFloat(document.getElementById('iScore').value);
+            const docs = parseInt(document.getElementById('iDocs').value);
+
+            if (id) {
+                institutions = institutions.map(i => i.id == id ? { ...i, name, affId, score, docs } : i);
+            } else {
+                const newI = { id: Date.now(), name, affId, score, docs };
+                institutions.push(newI);
+            }
+            saveData();
+            renderAll();
+            resetInstitutionForm();
+        }
+
+        function editInstitution(id) {
+            const i = institutions.find(item => item.id == id);
+            if(i) {
+                document.getElementById('instEditId').value = i.id;
+                document.getElementById('iName').value = i.name;
+                document.getElementById('iAffId').value = i.affId;
+                document.getElementById('iScore').value = i.score;
+                document.getElementById('iDocs').value = i.docs;
+            }
+        }
+
+        function deleteInstitution(id) {
+            if(confirm('Yakin ingin menghapus institusi ini?')) {
+                institutions = institutions.filter(i => i.id != id);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function resetInstitutionForm() {
+            document.getElementById('institutionForm').reset();
+            document.getElementById('instEditId').value = '';
+        }
+
+        function initCharts() {
+            const ctx1 = document.getElementById('nexaChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['NEXA 1', 'NEXA 2', 'NEXA 3', 'NEXA 4', 'NEXA 5', 'NEXA 6'],
+                    datasets: [{
+                        data: [12, 19, 15, 8, 10, 6],
+                        backgroundColor: ['#6366f1', '#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 11 } } } }
+                }
+            });
+
+            const ctx2 = document.getElementById('growthChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['2022', '2023', '2024', '2025', '2026'],
+                    datasets: [{
+                        label: 'Jumlah Publikasi',
+                        data: [1200, 2400, 4100, 6800, 9500],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(51, 65, 85, 0.4)' } },
+                        y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(51, 65, 85, 0.4)' } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
