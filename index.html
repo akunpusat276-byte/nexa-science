@@ -516,28 +516,11 @@
 
     <!-- JAVASCRIPT APLIKASI -->
     <script>
-        const defaultJournals = [
-            { id: 1, title: "Jurnal Teknologi Informasi dan Ilmu Komputer (JTIIK)", publisher: "Universitas Brawijaya", level: "NEXA 1", issn: "2528-6579", file: "#" },
-            { id: 2, title: "Indonesian Journal of Electrical Engineering and Computer Science", publisher: "Universitas Ahmad Dahlan", level: "NEXA 1", issn: "2502-4752", file: "#" },
-            { id: 3, title: "Jurnal Ilmu Komputer dan Informasi", publisher: "Universitas Indonesia", level: "NEXA 2", issn: "2085-871X", file: "#" },
-            { id: 4, title: "Media Informatika Budidarma", publisher: "STMIK Budidarma", level: "NEXA 3", issn: "2614-5278", file: "#" },
-            { id: 5, title: "Jurnal Sistem Komputer dan Rekayasa", publisher: "Universitas Telkom", level: "NEXA 4", issn: "2598-6333", file: "#" },
-            { id: 6, title: "Jurnal Inovasi Riset Global", publisher: "NEXA Press", level: "NEXA 5", issn: "2715-9988", file: "#" }
-        ];
+        const defaultJournals = [ ];
 
-        const defaultResearchers = [
-            { id: 1, name: "Prof. Dr. Joko Saputro, M.Kom.", affiliation: "Universitas Indonesia", citations: 1450, hIndex: 22 },
-            { id: 2, name: "Dr. Siti Aminah, Ph.D.", affiliation: "Universitas Gadjah Mada", citations: 980, hIndex: 18 },
-            { id: 3, name: "Dr. Budi Santoso, M.T.", affiliation: "Institut Teknologi Bandung", citations: 1200, hIndex: 20 },
-            { id: 4, name: "Ahmad Fauzi, M.Cs.", affiliation: "Universitas Diponegoro", citations: 450, hIndex: 11 }
-        ];
+        const defaultResearchers = [ ];
 
-        const defaultInstitutions = [
-            { id: 1, name: "Universitas Indonesia", affId: "ID-001", score: 9845.5, docs: 15420 },
-            { id: 2, name: "Institut Teknologi Bandung", affId: "ID-002", score: 9620.0, docs: 14890 },
-            { id: 3, name: "Universitas Gadjah Mada", affId: "ID-003", score: 9450.2, docs: 14100 },
-            { id: 4, name: "Universitas Brawijaya", affId: "ID-004", score: 8900.4, docs: 11250 }
-        ];
+        const defaultInstitutions = [ ];
 
         let journals = JSON.parse(localStorage.getItem('nexa_journals')) || defaultJournals;
         let researchers = JSON.parse(localStorage.getItem('nexa_researchers')) || defaultResearchers;
