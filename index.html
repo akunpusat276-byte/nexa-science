@@ -30,13 +30,36 @@
     <!-- FontAwesome & Chart.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase SDK (Modular v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Konfigurasi Firebase Anda (Sesuaikan jika diperlukan)
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-CONTOH_API_KEY_ANDA",
+            authDomain: "nexa-science-db.firebaseapp.com",
+            projectId: "nexa-science-db",
+            storageBucket: "nexa-science-db.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:123456:web:abcdef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Ekspor ke global agar bisa dipanggil fungsi lain
+        window.db = db;
+        window.firebaseCols = { collection, getDocs, addDoc, updateDoc, deleteDoc, doc };
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
     <!-- NAVBAR -->
     <header class="bg-slate-800/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Logo dengan Fitur Ketuk 5 Kali Rahasia untuk Admin di HP -->
                 <div class="flex items-center space-x-3 cursor-pointer select-none" onclick="handleLogoTap()">
                     <div class="bg-indigo-600 text-white font-bold p-2 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
                         <i class="fa-solid fa-n text-xl"></i>
@@ -47,7 +70,6 @@
                     </div>
                 </div>
 
-                <!-- Desktop Navigation Links -->
                 <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
                     <button onclick="switchTab('beranda')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium transition text-indigo-400 bg-indigo-500/10" data-target="beranda">Beranda</button>
                     <button onclick="switchTab('peneliti')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium transition text-slate-300 hover:text-white hover:bg-slate-700/50" data-target="peneliti">Peneliti</button>
@@ -62,7 +84,6 @@
                     </button>
                 </nav>
 
-                <!-- Actions: Dark Mode & Logout Admin -->
                 <div class="flex items-center space-x-3">
                     <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-slate-700/50 text-slate-300 hover:text-white transition">
                         <i id="themeIcon" class="fa-solid fa-moon"></i>
@@ -70,7 +91,6 @@
                     <button id="logoutAdminBtn" onclick="logoutAdmin()" class="hidden bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition items-center gap-1.5">
                         <i class="fa-solid fa-right-from-bracket"></i> Keluar Admin
                     </button>
-                    <!-- Mobile Hamburger Button -->
                     <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg bg-slate-700 text-slate-300 hover:text-white">
                         <i class="fa-solid fa-bars text-lg"></i>
                     </button>
@@ -78,7 +98,6 @@
             </div>
         </div>
 
-        <!-- Mobile Menu Dropdown -->
         <div id="mobileMenu" class="hidden md:hidden bg-slate-800 border-b border-slate-700 px-4 pt-2 pb-4 space-y-1">
             <button onclick="switchTab('beranda'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700">Beranda</button>
             <button onclick="switchTab('peneliti'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-700">Peneliti</button>
@@ -90,9 +109,7 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT CONTAINER -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
         <!-- TAB: BERANDA -->
         <section id="tab-beranda" class="space-y-8 tab-content">
             <div class="relative bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-800 rounded-3xl p-8 sm:p-12 border border-slate-700 shadow-2xl overflow-hidden">
@@ -107,7 +124,6 @@
                     <p class="text-slate-300 text-base sm:text-lg">
                         Eksplorasi direktori jurnal terakreditasi, profil peneliti kredibel, pemeringkatan institusi, dan publikasi riset komprehensif dalam satu platform terintegrasi.
                     </p>
-                    
                     <div class="flex flex-col sm:flex-row gap-3 pt-2">
                         <div class="relative flex-grow">
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
@@ -120,7 +136,6 @@
                 </div>
             </div>
 
-            <!-- Quick Stats -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-slate-800/60 border border-slate-700/80 p-5 rounded-2xl">
                     <div class="text-indigo-400 text-2xl font-black mb-1" id="statJournals">0</div>
@@ -140,7 +155,6 @@
                 </div>
             </div>
 
-            <!-- Featured Journals -->
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-bold text-white flex items-center gap-2">
@@ -220,7 +234,7 @@
                     <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">Layanan Pengajuan Naskah</span>
                     <h2 class="text-3xl font-extrabold text-white">Ingin Mempublikasikan Jurnal atau Artikel ke Website Ini?</h2>
                     <p class="text-slate-300">
-                        Kami membuka kesempatan seluas-luasnya bagi para peneliti, dosen, dan mahasiswa untuk mendaftarkan jurnal ilmiah atau naskah riset agar terindeks di sistem NEXA Science Index. Pengunggahan dan verifikasi data artikel sepenuhnya dikelola secara eksklusif oleh Admin sistem. Silakan hubungi kontak resmi di bawah ini atau gunakan pembuat pesan instan untuk mengirimkan data naskah Anda.
+                        Kami membuka kesempatan seluas-luasnya bagi para peneliti, dosen, dan mahasiswa untuk mendaftarkan jurnal ilmiah atau naskah riset agar terindeks di sistem NEXA Science Index. Pengunggahan dan verifikasi data artikel sepenuhnya dikelola secara eksklusif oleh Admin sistem.
                     </p>
                 </div>
 
@@ -249,8 +263,6 @@
                     <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-file-pen text-indigo-400"></i> Buat Format Pesan Pengajuan Naskah
                     </h3>
-                    <p class="text-xs text-slate-400">Isi data di bawah ini untuk menghasilkan draf pesan otomatis yang bisa langsung Anda kirimkan via WhatsApp atau Email ke Admin.</p>
-                    
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 mb-1">Judul Artikel / Jurnal</label>
@@ -276,12 +288,11 @@
                             <input type="text" id="genLink" placeholder="https://drive.google.com/..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
                         </div>
                     </div>
-
                     <div class="flex flex-wrap gap-3 pt-2">
-                        <button onclick="sendViaWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                        <button onclick="sendViaWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg">
                             <i class="fa-brands fa-whatsapp text-base"><span>Kirim Draf ke WhatsApp</span></i>
                         </button>
-                        <button onclick="sendViaEmail()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+                        <button onclick="sendViaEmail()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg">
                             <i class="fa-solid fa-envelope text-base"><span>Kirim Draf ke Email</span></i>
                         </button>
                     </div>
@@ -319,17 +330,17 @@
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <div>
-                        <h3 class="text-amber-400 font-bold">Panel Kontrol Administrator Eksklusif</h3>
-                        <p class="text-slate-300 text-xs">Anda masuk sebagai Administrator utama sistem NEXA Science Index.</p>
+                        <h3 class="text-amber-400 font-bold">Panel Kontrol Administrator (Terhubung ke Firebase)</h3>
+                        <p class="text-slate-300 text-xs">Data tersimpan secara aman di Google Cloud Firestore.</p>
                     </div>
                 </div>
                 <button onclick="logoutAdmin()" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition">Keluar Admin</button>
             </div>
 
-            <!-- Manajer: Jurnal & Artikel -->
+            <!-- Manajer: Jurnal -->
             <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl space-y-4">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-book-bookmark text-indigo-400"></i> Kelola Jurnal & Unggah Dokumen Artikel
+                    <i class="fa-solid fa-book-bookmark text-indigo-400"></i> Kelola Jurnal & Artikel
                 </h3>
                 <form id="journalForm" onsubmit="saveJournal(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <input type="hidden" id="journalEditId">
@@ -357,17 +368,17 @@
                         <input type="text" id="jIssn" placeholder="2xxx-xxxx" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-semibold text-slate-300 mb-1">Unggah Dokumen Berkas (.pdf, .docx)</label>
-                        <input type="file" id="jFile" accept=".pdf,.doc,.docx" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Tautan File Dokumen (URL Google Drive / PDF)</label>
+                        <input type="text" id="jFile" placeholder="https://..." required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-indigo-500">
                     </div>
                     <div class="sm:col-span-2 flex gap-2">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2 rounded-xl text-sm transition">Simpan Jurnal</button>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2 rounded-xl text-sm transition">Simpan ke Firestore</button>
                         <button type="button" onclick="resetJournalForm()" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-xl text-sm transition">Batal</button>
                     </div>
                 </form>
 
                 <div class="pt-4 border-t border-slate-700">
-                    <h4 class="text-sm font-semibold text-slate-300 mb-3">Daftar Artikel Jurnal Terdaftar</h4>
+                    <h4 class="text-sm font-semibold text-slate-300 mb-3">Daftar Jurnal Terdaftar</h4>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs">
                             <thead>
@@ -478,10 +489,8 @@
                 </div>
             </div>
         </section>
-
     </main>
 
-    <!-- FOOTER -->
     <footer class="bg-slate-800 border-t border-slate-700 mt-12 py-8">
         <div class="max-w-7xl mx-auto px-4 text-center space-y-3">
             <div class="flex items-center justify-center space-x-2">
@@ -494,7 +503,7 @@
         </div>
     </footer>
 
-    <!-- MODAL LOGIN ADMIN RAHASIA -->
+    <!-- MODAL LOGIN ADMIN -->
     <div id="adminLoginModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-6 shadow-2xl">
             <div class="text-center space-y-2">
@@ -514,63 +523,60 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT APLIKASI -->
+    <!-- JAVASCRIPT LOGIC & FIRESTORE INTEGRATION -->
     <script>
-        const defaultJournals = [ ];
-
-        const defaultResearchers = [ ];
-
-        const defaultInstitutions = [ ];
-
-        let journals = JSON.parse(localStorage.getItem('nexa_journals')) || defaultJournals;
-        let researchers = JSON.parse(localStorage.getItem('nexa_researchers')) || defaultResearchers;
-        let institutions = JSON.parse(localStorage.getItem('nexa_institutions')) || defaultInstitutions;
+        let journals = [];
+        let researchers = [];
+        let institutions = [];
         let isAdmin = localStorage.getItem('nexa_is_admin') === 'true';
 
-        // Variabel untuk counter ketuk logo di HP
         let logoTapCount = 0;
         let logoTapTimer = null;
 
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('firebase-ready', async () => {
+            await fetchAllDataFromFirestore();
             updateAuthUI();
-            renderAll();
             initCharts();
-
-            // Shortcut Keyboard Rahasia Ctrl + Shift + A di Desktop
-            window.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.shiftKey && e.code === 'KeyA') {
-                    e.preventDefault();
-                    openAdminModal();
-                }
-            });
         });
 
-        // Fitur Ketuk Logo 5 Kali untuk Membuka Login Admin di HP
+        async function fetchAllDataFromFirestore() {
+            try {
+                const { collection, getDocs } = window.firebaseCols;
+                const db = window.db;
+
+                // Ambil Jurnal
+                const jSnap = await getDocs(collection(db, "journals"));
+                journals = jSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                // Ambil Peneliti
+                const rSnap = await getDocs(collection(db, "researchers"));
+                researchers = rSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                // Ambil Institusi
+                const iSnap = await getDocs(collection(db, "institutions"));
+                institutions = iSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                renderAll();
+            } catch (error) {
+                console.error("Gagal memuat data dari Firestore:", error);
+            }
+        }
+
+        // Fitur Ketuk Logo 5 Kali
         function handleLogoTap() {
             logoTapCount++;
             clearTimeout(logoTapTimer);
-            
             if (logoTapCount >= 5) {
                 logoTapCount = 0;
                 openAdminModal();
             } else {
-                logoTapTimer = setTimeout(() => {
-                    logoTapCount = 0;
-                }, 1000); // Reset hitungan jika jeda lebih dari 1 detik
+                logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 1000);
             }
-        }
-
-        function saveData() {
-            localStorage.setItem('nexa_journals', JSON.stringify(journals));
-            localStorage.setItem('nexa_researchers', JSON.stringify(researchers));
-            localStorage.setItem('nexa_institutions', JSON.stringify(institutions));
-            localStorage.setItem('nexa_is_admin', isAdmin);
         }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-indigo-400', 'bg-indigo-500/10');
                 btn.classList.add('text-slate-300');
@@ -583,8 +589,7 @@
         }
 
         function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
+            document.getElementById('mobileMenu').classList.toggle('hidden');
         }
 
         function toggleDarkMode() {
@@ -608,7 +613,7 @@
             const pass = document.getElementById('adminPasswordInput').value;
             if (pass === 'admin123') {
                 isAdmin = true;
-                saveData();
+                localStorage.setItem('nexa_is_admin', 'true');
                 updateAuthUI();
                 closeAdminModal();
                 switchTab('admin');
@@ -619,7 +624,7 @@
 
         function logoutAdmin() {
             isAdmin = false;
-            saveData();
+            localStorage.setItem('nexa_is_admin', 'false');
             updateAuthUI();
             switchTab('beranda');
         }
@@ -657,7 +662,7 @@
             document.getElementById('statJournals').innerText = journals.length;
             document.getElementById('statResearchers').innerText = researchers.length;
             document.getElementById('statInstitutions').innerText = institutions.length;
-            const totalDocs = institutions.reduce((acc, curr) => acc + curr.docs, 0);
+            const totalDocs = institutions.reduce((acc, curr) => acc + (Number(curr.docs) || 0), 0);
             document.getElementById('statDocuments').innerText = totalDocs.toLocaleString();
         }
 
@@ -714,7 +719,6 @@
         function renderResearchers() {
             const search = document.getElementById('searchResearcher').value.toLowerCase();
             const container = document.getElementById('researchersContainer');
-
             const filtered = researchers.filter(r => r.name.toLowerCase().includes(search) || r.affiliation.toLowerCase().includes(search));
 
             container.innerHTML = filtered.length ? filtered.map(r => `
@@ -730,7 +734,7 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-700/60 text-center">
                         <div class="bg-slate-900/60 p-2.5 rounded-xl">
-                            <div class="text-indigo-400 font-bold text-sm">${r.citations.toLocaleString()}</div>
+                            <div class="text-indigo-400 font-bold text-sm">${Number(r.citations).toLocaleString()}</div>
                             <div class="text-[10px] text-slate-400 uppercase tracking-wider">Sitasi</div>
                         </div>
                         <div class="bg-slate-900/60 p-2.5 rounded-xl">
@@ -750,8 +754,8 @@
                     <td class="px-6 py-4 font-bold text-indigo-400">#${idx + 1}</td>
                     <td class="px-6 py-4 font-semibold text-white">${inst.name}</td>
                     <td class="px-6 py-4 text-slate-400">${inst.affId}</td>
-                    <td class="px-6 py-4 text-center font-bold text-amber-400">${inst.score.toLocaleString()}</td>
-                    <td class="px-6 py-4 text-center text-slate-300">${inst.docs.toLocaleString()}</td>
+                    <td class="px-6 py-4 text-center font-bold text-amber-400">${Number(inst.score).toLocaleString()}</td>
+                    <td class="px-6 py-4 text-center text-slate-300">${Number(inst.docs).toLocaleString()}</td>
                 </tr>
             `).join('');
         }
@@ -769,10 +773,8 @@
             const author = document.getElementById('genAuthor').value;
             const nexa = document.getElementById('genNexa').value;
             const link = document.getElementById('genLink').value;
-
             const text = `Halo Admin NEXA Science Index,\n\nSaya ingin mengajukan publikasi naskah dengan detail berikut:\n- Judul: ${title}\n- Penulis: ${author}\n- Target Level: ${nexa}\n- Tautan File: ${link}\n\nMohon bantuannya untuk diverifikasi. Terima kasih.`;
-            const url = `https://wa.me/6285773842385?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
+            window.open(`https://wa.me/6285773842385?text=${encodeURIComponent(text)}`, '_blank');
         }
 
         function sendViaEmail() {
@@ -780,7 +782,6 @@
             const author = document.getElementById('genAuthor').value;
             const nexa = document.getElementById('genNexa').value;
             const link = document.getElementById('genLink').value;
-
             const subject = `Pengajuan Publikasi Naskah - ${title}`;
             const body = `Halo Admin NEXA Science Index,\n\nSaya ingin mengajukan publikasi naskah dengan detail berikut:\n- Judul: ${title}\n- Penulis: ${author}\n- Target Level: ${nexa}\n- Tautan File: ${link}\n\nMohon verifikasinya. Terima kasih.`;
             window.location.href = `mailto:jokosaputro200513@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -793,8 +794,8 @@
                     <td class="p-3 text-slate-400">${j.publisher}</td>
                     <td class="p-3"><span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-bold">${j.level}</span></td>
                     <td class="p-3 text-right space-x-2">
-                        <button onclick="editJournal(${j.id})" class="text-amber-400 hover:text-amber-300 font-medium">Edit</button>
-                        <button onclick="deleteJournal(${j.id})" class="text-rose-400 hover:text-rose-300 font-medium">Hapus</button>
+                        <button onclick="editJournal('${j.id}')" class="text-amber-400 hover:text-amber-300 font-medium">Edit</button>
+                        <button onclick="deleteJournal('${j.id}')" class="text-rose-400 hover:text-rose-300 font-medium">Hapus</button>
                     </td>
                 </tr>
             `).join('');
@@ -805,8 +806,8 @@
                     <td class="p-3 text-slate-400">${r.affiliation}</td>
                     <td class="p-3 text-indigo-400">${r.citations}</td>
                     <td class="p-3 text-right space-x-2">
-                        <button onclick="editResearcher(${r.id})" class="text-amber-400 hover:text-amber-300 font-medium">Edit</button>
-                        <button onclick="deleteResearcher(${r.id})" class="text-rose-400 hover:text-rose-300 font-medium">Hapus</button>
+                        <button onclick="editResearcher('${r.id}')" class="text-amber-400 hover:text-amber-300 font-medium">Edit</button>
+                        <button onclick="deleteResearcher('${r.id}')" class="text-rose-400 hover:text-rose-300 font-medium">Hapus</button>
                     </td>
                 </tr>
             `).join('');
@@ -817,34 +818,34 @@
                     <td class="p-3 text-slate-400">${i.affId}</td>
                     <td class="p-3 text-amber-400 font-bold">${i.score}</td>
                     <td class="p-3 text-right space-x-2">
-                        <button onclick="editInstitution(${i.id})" class="text-amber-400 hover:text-amber-300 font-medium">Edit</button>
-                        <button onclick="deleteInstitution(${i.id})" class="text-rose-400 hover:text-rose-300 font-medium">Hapus</button>
+                        <button onclick="editInstitution('${i.id}')" class="text-amber-400 hover:text-amber-300 font-medium">Edit</button>
+                        <button onclick="deleteInstitution('${i.id}')" class="text-rose-400 hover:text-rose-300 font-medium">Hapus</button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function saveJournal(e) {
+        // Operasi Firestore: Jurnal
+        async function saveJournal(e) {
             e.preventDefault();
+            const { collection, addDoc, updateDoc, doc } = window.firebaseCols;
+            const db = window.db;
+
             const id = document.getElementById('journalEditId').value;
-            const title = document.getElementById('jTitle').value;
-            const publisher = document.getElementById('jPublisher').value;
-            const level = document.getElementById('jLevel').value;
-            const issn = document.getElementById('jIssn').value;
-            const fileInput = document.getElementById('jFile');
-            let filePath = "#";
-            if (fileInput.files.length > 0) {
-                filePath = URL.createObjectURL(fileInput.files[0]);
-            }
+            const data = {
+                title: document.getElementById('jTitle').value,
+                publisher: document.getElementById('jPublisher').value,
+                level: document.getElementById('jLevel').value,
+                issn: document.getElementById('jIssn').value,
+                file: document.getElementById('jFile').value
+            };
 
             if (id) {
-                journals = journals.map(j => j.id == id ? { ...j, title, publisher, level, issn, file: fileInput.files.length > 0 ? filePath : j.file } : j);
+                await updateDoc(doc(db, "journals", id), data);
             } else {
-                const newJ = { id: Date.now(), title, publisher, level, issn, file: filePath };
-                journals.push(newJ);
+                await addDoc(collection(db, "journals"), data);
             }
-            saveData();
-            renderAll();
+            await fetchAllDataFromFirestore();
             resetJournalForm();
         }
 
@@ -856,15 +857,16 @@
                 document.getElementById('jPublisher').value = j.publisher;
                 document.getElementById('jLevel').value = j.level;
                 document.getElementById('jIssn').value = j.issn;
+                document.getElementById('jFile').value = j.file;
                 window.scrollTo({ top: 500, behavior: 'smooth' });
             }
         }
 
-        function deleteJournal(id) {
-            if(confirm('Yakin ingin menghapus jurnal ini?')) {
-                journals = journals.filter(j => j.id != id);
-                saveData();
-                renderAll();
+        async function deleteJournal(id) {
+            if(confirm('Yakin ingin menghapus jurnal ini dari Firestore?')) {
+                const { deleteDoc, doc } = window.firebaseCols;
+                await deleteDoc(doc(window.db, "journals", id));
+                await fetchAllDataFromFirestore();
             }
         }
 
@@ -873,22 +875,26 @@
             document.getElementById('journalEditId').value = '';
         }
 
-        function saveResearcher(e) {
+        // Operasi Firestore: Peneliti
+        async function saveResearcher(e) {
             e.preventDefault();
+            const { collection, addDoc, updateDoc, doc } = window.firebaseCols;
+            const db = window.db;
+
             const id = document.getElementById('resEditId').value;
-            const name = document.getElementById('rName').value;
-            const affiliation = document.getElementById('rAffiliation').value;
-            const citations = parseInt(document.getElementById('rCitations').value);
-            const hIndex = parseInt(document.getElementById('rHIndex').value);
+            const data = {
+                name: document.getElementById('rName').value,
+                affiliation: document.getElementById('rAffiliation').value,
+                citations: parseInt(document.getElementById('rCitations').value),
+                hIndex: parseInt(document.getElementById('rHIndex').value)
+            };
 
             if (id) {
-                researchers = researchers.map(r => r.id == id ? { ...r, name, affiliation, citations, hIndex } : r);
+                await updateDoc(doc(db, "researchers", id), data);
             } else {
-                const newR = { id: Date.now(), name, affiliation, citations, hIndex };
-                researchers.push(newR);
+                await addDoc(collection(db, "researchers"), data);
             }
-            saveData();
-            renderAll();
+            await fetchAllDataFromFirestore();
             resetResearcherForm();
         }
 
@@ -903,11 +909,11 @@
             }
         }
 
-        function deleteResearcher(id) {
-            if(confirm('Yakin ingin menghapus profil peneliti ini?')) {
-                researchers = researchers.filter(r => r.id != id);
-                saveData();
-                renderAll();
+        async function deleteResearcher(id) {
+            if(confirm('Yakin ingin menghapus profil peneliti ini dari Firestore?')) {
+                const { deleteDoc, doc } = window.firebaseCols;
+                await deleteDoc(doc(window.db, "researchers", id));
+                await fetchAllDataFromFirestore();
             }
         }
 
@@ -916,22 +922,26 @@
             document.getElementById('resEditId').value = '';
         }
 
-        function saveInstitution(e) {
+        // Operasi Firestore: Institusi
+        async function saveInstitution(e) {
             e.preventDefault();
+            const { collection, addDoc, updateDoc, doc } = window.firebaseCols;
+            const db = window.db;
+
             const id = document.getElementById('instEditId').value;
-            const name = document.getElementById('iName').value;
-            const affId = document.getElementById('iAffId').value;
-            const score = parseFloat(document.getElementById('iScore').value);
-            const docs = parseInt(document.getElementById('iDocs').value);
+            const data = {
+                name: document.getElementById('iName').value,
+                affId: document.getElementById('iAffId').value,
+                score: parseFloat(document.getElementById('iScore').value),
+                docs: parseInt(document.getElementById('iDocs').value)
+            };
 
             if (id) {
-                institutions = institutions.map(i => i.id == id ? { ...i, name, affId, score, docs } : i);
+                await updateDoc(doc(db, "institutions", id), data);
             } else {
-                const newI = { id: Date.now(), name, affId, score, docs };
-                institutions.push(newI);
+                await addDoc(collection(db, "institutions"), data);
             }
-            saveData();
-            renderAll();
+            await fetchAllDataFromFirestore();
             resetInstitutionForm();
         }
 
@@ -946,11 +956,11 @@
             }
         }
 
-        function deleteInstitution(id) {
-            if(confirm('Yakin ingin menghapus institusi ini?')) {
-                institutions = institutions.filter(i => i.id != id);
-                saveData();
-                renderAll();
+        async function deleteInstitution(id) {
+            if(confirm('Yakin ingin menghapus institusi ini dari Firestore?')) {
+                const { deleteDoc, doc } = window.firebaseCols;
+                await deleteDoc(doc(window.db, "institutions", id));
+                await fetchAllDataFromFirestore();
             }
         }
 
@@ -970,10 +980,7 @@
                         backgroundColor: ['#6366f1', '#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444']
                     }]
                 },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 11 } } } }
-                }
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 11 } } } } }
             });
 
             const ctx2 = document.getElementById('growthChart').getContext('2d');
